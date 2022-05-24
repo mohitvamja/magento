@@ -3,7 +3,7 @@
     <default>
         <checkoutchamp_meta>
             <general>
-                <is_active>1</is_active>
+                <is_active>0</is_active>
             </general>
         </checkoutchamp_meta>
     </default>

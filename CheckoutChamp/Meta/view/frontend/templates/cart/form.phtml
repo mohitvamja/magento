@@ -1,0 +1,141 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+
+/**  @var $block \Magento\Checkout\Block\Cart\Grid */
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$cart_id = $objectManager->create('Magento\Checkout\Model\Cart')->getQuote()->getId();
+$storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORES;
+$checkout_url = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('checkoutchamp_meta/general/meta_checkout_url',$storeScope);
+
+?>
+<style>
+.cart-container .form-cart {
+    width: 100%;
+}
+.checkout-notice{
+    width: 530px;    
+    float: right;
+    margin-left: 10px;
+
+}
+
+</style>
+<?php $mergedCells = ($this->helper(Magento\Tax\Helper\Data::class)->displayCartBothPrices() ? 2 : 1); ?>
+<?= $block->getChildHtml('form_before') ?>
+<form action="<?= $block->escapeUrl($block->getUrl('checkout/cart/updatePost')) ?>"
+          method="post"
+          id="form-validate"
+          data-mage-init='{"Magento_Checkout/js/action/update-shopping-cart":
+              {"validationURL" : "<?= $block->escapeUrl($block->getUrl('checkout/cart/updateItemQty')) ?>",
+              "updateCartActionContainer": "#update_cart_action_container"}
+          }'
+          class="form form-cart">
+    <?= $block->getBlockHtml('formkey') ?>
+    <div class="cart table-wrapper<?= $mergedCells == 2 ? ' detailed' : '' ?>">
+        <?php if ($block->getPagerHtml()) :?>
+            <div class="cart-products-toolbar cart-products-toolbar-top toolbar"
+                 data-attribute="cart-products-toolbar-top"><?= $block->getPagerHtml() ?>
+            </div>
+        <?php endif ?>
+        <table id="shopping-cart-table"
+               class="cart items data table"
+               data-mage-init='{"shoppingCart":{"emptyCartButton": ".action.clear",
+               "updateCartActionContainer": "#update_cart_action_container"}}'>
+            <caption class="table-caption"><?= $block->escapeHtml(__('Shopping Cart Items')) ?></caption>
+            <thead>
+                <tr>
+                    <th class="col item" scope="col"><span><?= $block->escapeHtml(__('Item')) ?></span></th>
+                    <th class="col price" scope="col"><span><?= $block->escapeHtml(__('Price')) ?></span></th>
+                    <th class="col qty" scope="col"><span><?= $block->escapeHtml(__('Qty')) ?></span></th>
+                    <th class="col subtotal" scope="col"><span><?= $block->escapeHtml(__('Subtotal')) ?></span></th>
+                </tr>
+            </thead>
+            <?php $url_array = array(); ?>
+            <?php $i = 0; ?>
+            <?php foreach ($block->getItems() as $_item) :?>
+                <?php
+                $product_data = $objectManager->create('Magento\Catalog\Model\ProductRepository')->get($_item->getSku());
+                $additional_data_id = $objectManager->create('Magento\Catalog\Model\Product')->load($product_data->getId())->getAdditionalDataId();
+                
+                $url_array[$i] = $additional_data_id.':'.$_item->getQty();
+                //echo"<pre>"; 
+                //print_r($additional_data_id); 
+                //print_r($_item->getQty());                
+                //print_r($_item->getProductId());
+                //https://checkout.theradreams.com/checkout1?products=5645.2562:1&cartId=981794796801cac83c6a11ab2d3d6e74&couponCode=TESTAUTO
+                //https://checkout.theradreams.com/checkout?products=12.21:1;15.25:1&cartId=981794796801cac83c6a11ab2d3d6e74&couponCode=
+                //exit;?>
+                <?= $block->getItemHtml($_item) ?>
+                <?php $i++; ?>
+            <?php endforeach ?>
+            <?php $url = implode(";",$url_array); ?>
+        </table>
+        <?php if ($block->getPagerHtml()) :?>
+            <div class="cart-products-toolbar cart-products-toolbar-bottom toolbar"
+                 data-attribute="cart-products-toolbar-bottom"><?= $block->getPagerHtml() ?>
+            </div>
+        <?php endif ?>
+    </div>
+    <div class="cart main actions">
+        <?php if ($block->getContinueShoppingUrl()) :?>
+            <a class="action continue"
+               href="<?= $block->escapeUrl($block->getContinueShoppingUrl()) ?>"
+               title="<?= $block->escapeHtmlAttr(__('Continue Shopping')) ?>">
+                <span><?= $block->escapeHtml(__('Continue Shopping')) ?></span>
+            </a>
+        <?php endif; ?>
+        <button type="button"
+                name="update_cart_action"
+                data-cart-empty=""
+                value="empty_cart"
+                title="<?= $block->escapeHtmlAttr(__('Clear Shopping Cart')) ?>"
+                class="action clear" id="empty_cart_button">
+            <span><?= $block->escapeHtml(__('Clear Shopping Cart')) ?></span>
+        </button>
+        <button type="submit"
+                name="update_cart_action"
+                data-cart-item-update=""
+                value="update_qty"
+                title="<?= $block->escapeHtmlAttr(__('Update Shopping Cart')) ?>"
+                class="action update">
+            <span><?= $block->escapeHtml(__('Update Shopping Cart')) ?></span>
+        </button>
+        <input type="hidden" value="" id="update_cart_action_container" data-cart-item-update=""/>
+
+        <!-- for order -->
+        <?php  if($checkout_url != ''): ?>
+            <button type="button"
+                    name="order_cart_action"
+                    id ="order_cart_action"
+                    value="order_qty"
+                    title="<?= $block->escapeHtml(__('Proceed to Checkout')) ?>"
+                    class="action order">
+                <span><?= /* @escapeNotVerified */ __('Proceed to Checkout') ?></span>
+            </button>
+        <?php else: ?>
+            <div class="checkout-notice messages">
+                <div class="message-notice notice message" data-ui-id="message-notice">
+                    <div><?= $block->escapeHtml(__('The checkout link has not been added, so please contact the administrator.')); ?></div>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+</form>
+<?= $block->getChildHtml('checkout.cart.order.actions') ?>
+<?= $block->getChildHtml('shopping.cart.table.after') ?>
+<script type="text/javascript">
+require(['jquery'], function ($) {
+    $(document).ready(function () {
+        $("#order_cart_action").click(function(){
+            window.location.href="<?php echo $checkout_url.'?products='.$url.'&cartId='.base64_encode($cart_id); ?>";
+        });
+    });
+});
+</script>
+

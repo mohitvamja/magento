@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="checkoutchamp13" translate="label" sortOrder="13">
+            <label>CheckoutChamp</label>
+        </tab>
+        <section id="checkoutchamp_meta" translate="label" type="text" sortOrder="300" showInDefault="1" showInWebsite="0" showInStore="0">
+            <class>separator-top</class>
+            <label>Checkout</label>
+            <tab>checkoutchamp13</tab>
+            <resource>CheckoutChamp_Meta::configuration</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General</label>
+                <field id="is_active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Select yes to enable extension</comment>
+                </field>
+                <field id="productget_api_url" translate="label" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Product Get API URL</label>
+                    <depends>
+                        <field id="is_active">1</field>
+                    </depends>
+                    <frontend_model>CheckoutChamp\Meta\Block\Adminhtml\System\Config\Text</frontend_model>
+                </field>
+                <field id="productupdate_api_url" translate="label" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Product Update API URL</label>
+                    <depends>
+                        <field id="is_active">1</field>
+                    </depends>
+                    <frontend_model>CheckoutChamp\Meta\Block\Adminhtml\System\Config\TextProductupdate</frontend_model>
+                </field>
+                <field id="meta_checkout_url" translate="label" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Checkout URL</label>
+                    <depends>
+                        <field id="is_active">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

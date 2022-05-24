@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="cart.summary" remove="true" />
+        <referenceBlock name="checkout.cart.form" template="CheckoutChamp_Meta::cart/form.phtml" />
+    </body>
+</page>

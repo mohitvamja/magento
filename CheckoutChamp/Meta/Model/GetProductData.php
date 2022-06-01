@@ -130,7 +130,8 @@ class GetProductData implements GetAllProduct
                 }
                 $product_data['items'][$i] = $value;
                 $i++;
-                $product_data['currency_code'] = $this->storeManager->getStore()->getBaseCode();                
+                $product_data['currency_code'] = $this->storeManager->getStore()->getBaseCurrencyCode();                
+
 
             }
         }else {

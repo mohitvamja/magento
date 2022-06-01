@@ -1,4 +1,4 @@
-# learning task_02 demo
+# learning task_02 demo2
 
 ### Configure the author name and email address to be used with your commits. Note that Git strips some characters (for example trailing periods) from user.name
 

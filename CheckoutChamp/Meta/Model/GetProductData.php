@@ -134,7 +134,7 @@ class GetProductData implements GetAllProduct
                 $product_data['currency'] = $this->storeManager->getStore()->getCode();
             }
         }else {
-            $product_data = "The consumer isn't authorized to access %resources.";
+            $product_data = "The consumer isn't authorized to access %resources .";
         }
         //echo"<pre>";
         //print_r($product_data);
